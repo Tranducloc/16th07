@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tool Dự Đoán Tài Xỉu</title>
+    <style>
+        /* Reset CSS */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+
+        /* Định dạng tổng thể */
+        body { background: #f8f9fa; text-align: center; padding: 20px; }
+        
+        .container {
+            max-width: 490px;
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin: auto;
+        }
+
+        h1 { color: #2c3e50; font-size: 24px; margin-bottom: 20px; }
+
+        .input-group { margin: 15px 0; }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        input:focus { border-color: #3498db; }
+
+        button {
+            width: 85%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #3498db;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover { background: #2980b9; }
+
+        .result-box {
+            font-size: 20px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .result-box.tai { background: #ff6b6b; color: white; }
+        .result-box.xiu { background: #1abc9c; color: white; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Tool Dự Đoán TX 🎲</h1>
+
+        <!-- Nhập Key -->
+        <div id="key-container" class="input-group">
+            <input type="text" id="access-key" placeholder="Nhập KEY để sử dụng...">
+            <button id="verify-key">🔑 Xác Nhận</button>
+            <p id="key-status" style="color: red; margin-top: 10px;"></p>
+        </div>
+
+        <!-- Nhập mã phiên (Ẩn khi chưa có KEY) -->
+        <div id="main-container" class="hidden">
+            <div class="input-group">
+                <input type="text" id="session-code" placeholder="Nhập mã phiên hoặc MD5..." autofocus>
+            </div>
+            <button id="analyze-btn">📊 Phân Tích</button>
+
+            <!-- Kết quả phân tích -->
+            <div id="result" class="result-box">🔍 Kết quả sẽ hiển thị ở đây...</div>
+        </div>
+    </div>
+
+    <script>
+        // Danh sách KEY hợp lệ
+        const validKeys = ["KEY"];
+
+        document.getElementById("verify-key").addEventListener("click", function() {
+            let key = document.getElementById("access-key").value.trim();
+            let keyStatus = document.getElementById("key-status");
+            let mainContainer = document.getElementById("main-container");
+
+            if (validKeys.includes(key)) {
+                keyStatus.style.color = "green";
+                keyStatus.innerHTML = "✅ KEY hợp lệ! Bạn có thể sử dụng.";
+                document.getElementById("key-container").classList.add("hidden");
+                mainContainer.classList.remove("hidden");
+            } else {
+                keyStatus.style.color = "green";
+                keyStatus.innerHTML = "❌ dcu mày key bố m share r đéo bt lấy à!";
+            }
+        });
+
+        document.getElementById("analyze-btn").addEventListener("click", function() {
+            let input = document.getElementById("session-code").value.trim();
+            let resultBox = document.getElementById("result");
+
+            if (!input) {
+                resultBox.innerHTML = "⚠️ Vui lòng nhập mã phiên !";
+                resultBox.className = "result-box";
+                return;
+            }
+
+            // Chuyển mã thành số để phân tích
+            let total = 0;
+            for (let i = 0; i < input.length; i++) {
+                total += input.charCodeAt(i);
+            }
+
+            // Lấy 3 chữ số cuối
+            let lastThree = total % 1000;
+            let sum = Math.floor(lastThree / 100) + Math.floor((lastThree % 100) / 10) + (lastThree % 10);
+
+            // Xác định tài/xỉu
+            let result = sum >= 2 ? "🔥 Tài" : "❄️ Xỉu";
+
+            // Điều chỉnh tỷ lệ % trong khoảng 70-99%
+            let percent = sum >= 11 
+                ? (Math.random() * (99 - 70) + 70).toFixed(2) 
+                : (Math.random() * (99 - 70) + 70).toFixed(2);
+
+            // Hiển thị kết quả với màu sắc tương ứng
+            resultBox.innerHTML = `🔍 Kết quả: <strong>${result}</strong> <br> 🎯 Xác suất: <strong>${percent}%</strong>`;
+            resultBox.className = sum >= 11 ? "result-box tai" : "result-box xiu";
+        });
+    </script>
+</body>
+</html>
+- [ ]
